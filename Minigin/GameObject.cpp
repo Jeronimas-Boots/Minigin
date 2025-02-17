@@ -5,20 +5,28 @@
 
 dae::GameObject::~GameObject() = default;
 
-void dae::GameObject::Update(){}
+void dae::GameObject::Update(float deltaTime)
+{
+	for (auto& component : m_pComponents)
+	{
+		component->Update(deltaTime);
+	}
+}
 
 void dae::GameObject::Render() const
 {
-	const auto& pos = m_transform.GetPosition();
-	Renderer::GetInstance().RenderTexture(*m_texture, pos.x, pos.y);
+	for (const auto& component : m_pComponents)
+	{
+		component->Render();
+	}
 }
 
-void dae::GameObject::SetTexture(const std::string& filename)
+void dae::GameObject::AddComponent(std::shared_ptr<dae::Component> pComponent)
 {
-	m_texture = ResourceManager::GetInstance().LoadTexture(filename);
+	m_pComponents.push_back(pComponent);
 }
 
 void dae::GameObject::SetPosition(float x, float y)
 {
-	m_transform.SetPosition(x, y, 0.0f);
+	m_Transform.SetPosition(x, y, 0.0f);
 }
